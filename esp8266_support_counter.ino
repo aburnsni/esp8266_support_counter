@@ -2,9 +2,10 @@
 #include <LiquidCrystal_I2C.h>
 #include <time.h>
 #include <ESP8266WiFi.h>
-#include "wifisettings.h"
+#include <WiFiManager.h>  
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+WiFiManager wifiManager;
 
 const char* host = "support.flemingfulton.org.uk";
 const char* url = "/node/14?tca=4ezZx6G1a00khifZ87eQzQfqN9uAew47G-ybgmL8aUI";
@@ -37,18 +38,17 @@ void setup() {
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight
   delay(200);
-
+ 
   // We start by connecting to a WiFi network
 
-  Serial.println();
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+//  Serial.println();
+//  Serial.println();
+//  Serial.print("Connecting to ");
+//  Serial.println(ssid);
   lcd.setCursor(0, 0);
   lcd.print("Connecting");
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+wifiManager.autoConnect();
 
   int i = 4;
   while (WiFi.status() != WL_CONNECTED) {
@@ -65,10 +65,13 @@ void setup() {
     }
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  lcd.setCursor(0,0);
+  lcd.print("SSID: ");
+  lcd.print(WiFi.SSID());
+  lcd.setCursor(0,1);
+  lcd.print("IP: ");
+  lcd.print(WiFi.localIP());
+  delay(5000);
 
   configTime(1 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   lcd.clear();
@@ -120,11 +123,11 @@ void updateJobs() {
       //Serial.println(line);
       if (start_loc > 0 && end_loc > 0)
       {
-        Serial.println("Jobs: ");
+        Serial.print("Jobs: ");
         lcd.print("Jobs: ");
         for (int i = start_loc + 7; i < end_loc; i++)
         {
-          Serial.print(line[i]);
+          Serial.println(line[i]);
           lcd.print(line[i]);
         }
               lcd.print("   ");
@@ -140,11 +143,11 @@ void updateJobs() {
         lcd.setCursor(9, 0);
         if (start_loc2 > 0 && end_loc2 > 0)
         {
-          Serial.println("Urgent:");
+          Serial.print("Urgent:");
           lcd.print("Urg: ");
           for (int i = start_loc2 + 8; i < end_loc2; i++)
           {
-            Serial.print(line[i]);
+            Serial.println(line[i]);
             lcd.print(line[i]);
           }
         }
@@ -193,4 +196,3 @@ void flashLED() {
   lcd.backlight(); // Enable or Turn On the backlight
   delay(400);
 }
-
