@@ -40,15 +40,10 @@ void setup() {
   delay(200);
  
   // We start by connecting to a WiFi network
-
-//  Serial.println();
-//  Serial.println();
-//  Serial.print("Connecting to ");
-//  Serial.println(ssid);
   lcd.setCursor(0, 0);
   lcd.print("Connecting");
 
-wifiManager.autoConnect();
+  wifiManager.autoConnect();
 
   int i = 4;
   while (WiFi.status() != WL_CONNECTED) {
